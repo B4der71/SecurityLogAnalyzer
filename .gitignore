@@ -1,0 +1,27 @@
+# Environment Variables
+.env
+
+# Virtual Environments
+venv/
+SecurityLogAnalyzer-venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution
+build/
+dist/
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
