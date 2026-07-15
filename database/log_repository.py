@@ -10,6 +10,9 @@ from database.database import SessionLocal
 from database.models import Log
 class LogRepository:
 
+    def __init__(self, session):
+        self.session = session
+
     def add(self, log: Log) -> Log:
         """
         Save a new log to the database.
@@ -20,21 +23,20 @@ class LogRepository:
         Returns:
             The saved Log object.
         """
-        session = SessionLocal()
+        
 
         try:
-            session.add(log)
-            session.commit()
-            session.refresh(log)
+            self.session.add(log)
+            self.session.commit()
+            self.session.refresh(log)
 
             return log
 
         except SQLAlchemyError:
-            session.rollback()
+            self.session.rollback()
             raise
 
-        finally:
-            session.close()
+        
     
     def get_by_id(self, log_id: int) -> Log | None:
         """
@@ -46,13 +48,10 @@ class LogRepository:
         Returns:
             Log object if found, otherwise None.
         """
-        session = SessionLocal()
+        return self.session.get(Log, log_id)
+        
 
-        try:
-            return session.get(Log, log_id)
-
-        finally:
-            session.close()
+        
 
     def get_all(self) -> list[Log]:
         """
@@ -61,16 +60,12 @@ class LogRepository:
         Returns:
             A list of Log objects.
         """
-        session = SessionLocal()
 
-        try:
-            statement = select(Log)
-            result = session.execute(statement)
+        statement = select(Log)
 
-            return result.scalars().all()
+        result = self.session.execute(statement)
 
-        finally:
-            session.close()
+        return result.scalars().all()
 
     def get_recent_logs(self, limit: int = 100) -> list[Log]:
         """
@@ -82,21 +77,20 @@ class LogRepository:
         Returns:
             A list of recent Log objects.
         """
-        session = SessionLocal()
+        
 
-        try:
-            statement = (
-                select(Log)
-                .order_by(desc(Log.timestamp))
-                .limit(limit)
-            )
+        
+        statement = (
+            select(Log)
+            .order_by(desc(Log.timestamp))
+            .limit(limit)
+        )
 
-            result = session.execute(statement)
+        result = self.session.execute(statement)
 
-            return result.scalars().all()
+        return result.scalars().all()
 
-        finally:
-            session.close()
+        
 
     def count(self) -> int:
         """
@@ -105,20 +99,19 @@ class LogRepository:
         Returns:
             Total number of logs.
         """
-        session = SessionLocal()
+        
 
-        try:
-            statement = (
-                select(func.count())
-                .select_from(Log)
-            )
+        
+        statement = (
+            select(func.count())
+            .select_from(Log)
+         )
 
-            result = session.execute(statement)
+        result = self.session.execute(statement)
 
-            return result.scalar_one()
+        return result.scalar_one()
 
-        finally:
-            session.close()
+        
 
     def search(
         self,
@@ -141,29 +134,28 @@ class LogRepository:
         Returns:
             A list of matching Log objects.
         """
-        session = SessionLocal()
+        
 
-        try:
-            statement = select(Log)
+        
+        statement = select(Log)
 
-            if filters:
-                statement = statement.where(*filters)
+        if filters:
+            statement = statement.where(*filters)
 
-            if order_by is not None:
-                if descending:
-                    statement = statement.order_by(desc(order_by))
-                else:
-                    statement = statement.order_by(order_by)
+        if order_by is not None:
+            if descending:
+                statement = statement.order_by(desc(order_by))
+            else:
+                statement = statement.order_by(order_by)
 
-            if offset is not None:
-                statement = statement.offset(offset)
+        if offset is not None:
+            statement = statement.offset(offset)
 
-            if limit is not None:
-                statement = statement.limit(limit)
+        if limit is not None:
+            statement = statement.limit(limit)
 
-            result = session.execute(statement)
+        result = self.session.execute(statement)
 
-            return result.scalars().all()
+        return result.scalars().all()
 
-        finally:
-            session.close()
+        

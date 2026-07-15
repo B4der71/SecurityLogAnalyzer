@@ -1,0 +1,5 @@
+{"EventID":4625,"TimeCreated":"2026-07-15T12:14:20","Computer":"DC01","TargetUserName":"Administrator","IpAddress":"192.168.1.55","IpPort":"54122","Status":"Failure"}
+{"EventID":4624,"TimeCreated":"2026-07-15T12:15:10","Computer":"DC01","TargetUserName":"Administrator","IpAddress":"192.168.1.55","IpPort":"54122","Status":"Success"}
+{"EventID":4625,"TimeCreated":"2026-07-15T12:16:40","Computer":"SERVER01","TargetUserName":"John","IpAddress":"10.0.0.15","IpPort":"53210","Status":"Failure"}
+{"EventID":4624,"TimeCreated":"2026-07-15T12:18:05","Computer":"SERVER01","TargetUserName":"John","IpAddress":"10.0.0.15","IpPort":"53210","Status":"Success"}
+{"EventID":9999,"TimeCreated":"2026-07-15T12:20:00","Computer":"TEST-PC","TargetUserName":"Guest","IpAddress":"192.168.1.100","IpPort":"60000","Status":"Unknown"}
