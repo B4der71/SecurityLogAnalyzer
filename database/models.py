@@ -132,6 +132,17 @@ class Log(Base):
         index=True,
     )
 
+    hostname: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    # Network protocol (TCP, UDP, ICMP, ...)
+    protocol: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True,
+    )
+
     # Source IP Address
     source_ip: Mapped[str | None] = mapped_column(
         INET,
@@ -139,9 +150,22 @@ class Log(Base):
         index=True,
     )
 
+    # Source Port
+    source_port: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
     # Destination IP Address
     destination_ip: Mapped[str | None] = mapped_column(
         INET,
+        nullable=True,
+        index=True,
+    )
+
+    # Destination Port
+    destination_port: Mapped[int | None] = mapped_column(
+        Integer,
         nullable=True,
     )
 
