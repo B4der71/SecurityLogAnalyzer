@@ -3,6 +3,7 @@ from sqlalchemy import (
     desc,
     func,
 )
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.sql.elements import ColumnElement
 
@@ -12,31 +13,35 @@ class LogRepository:
 
     def __init__(self, session):
         self.session = session
-
-    def add(self, log: Log) -> Log:
+    
+    def commit(self) -> None:
         """
-        Save a new log to the database.
-
-        Args:
-            log: Log object to save.
-
-        Returns:
-            The saved Log object.
+        Commit the current transaction.
         """
-        
 
         try:
-            self.session.add(log)
             self.session.commit()
-            self.session.refresh(log)
-
-            return log
 
         except SQLAlchemyError:
             self.session.rollback()
             raise
+    
+    def rollback(self) -> None:
+        """
+        Roll back the current transaction.
+        """
 
-        
+        self.session.rollback()
+
+    def add(self, log: Log) -> None:
+        """
+        Stage a log for insertion.
+
+        The log is not committed until commit() is called.
+        """
+
+        self.session.add(log)
+ 
     
     def get_by_id(self, log_id: int) -> Log | None:
         """
@@ -49,9 +54,7 @@ class LogRepository:
             Log object if found, otherwise None.
         """
         return self.session.get(Log, log_id)
-        
-
-        
+          
 
     def get_all(self) -> list[Log]:
         """
@@ -67,51 +70,6 @@ class LogRepository:
 
         return result.scalars().all()
 
-    def get_recent_logs(self, limit: int = 100) -> list[Log]:
-        """
-        Retrieve the most recent logs.
-
-        Args:
-            limit: Maximum number of logs to return.
-
-        Returns:
-            A list of recent Log objects.
-        """
-        
-
-        
-        statement = (
-            select(Log)
-            .order_by(desc(Log.timestamp))
-            .limit(limit)
-        )
-
-        result = self.session.execute(statement)
-
-        return result.scalars().all()
-
-        
-
-    def count(self) -> int:
-        """
-        Return the total number of logs.
-
-        Returns:
-            Total number of logs.
-        """
-        
-
-        
-        statement = (
-            select(func.count())
-            .select_from(Log)
-         )
-
-        result = self.session.execute(statement)
-
-        return result.scalar_one()
-
-        
 
     def search(
         self,
@@ -158,4 +116,69 @@ class LogRepository:
 
         return result.scalars().all()
 
-        
+    def count(self) -> int:
+        """
+        Return the total number of logs.
+        """
+
+        statement = select(
+            func.count(Log.log_id)
+        )
+
+        return self.session.scalar(statement) or 0
+    
+    def count_by_log_type(self) -> dict[str, int]:
+        """
+        Return the number of logs for each log type.
+        """
+
+        statement = (
+            select(
+                Log.log_type,
+                func.count(Log.log_id),
+            )
+            .group_by(Log.log_type)
+            .order_by(Log.log_type)
+        )
+
+        result = self.session.execute(statement)
+
+        return {
+            log_type: count
+            for log_type, count in result
+        }
+    
+    def count_by_status(self) -> dict[str, int]:
+        """
+        Return the number of logs for each status.
+        """
+
+        statement = (
+            select(
+                Log.status,
+                func.count(Log.log_id),
+            )
+            .group_by(Log.status)
+            .order_by(Log.status)
+        )
+
+        result = self.session.execute(statement)
+
+        return {
+            status: count
+            for status, count in result
+        }
+    
+    def get_recent(
+        self,
+        limit: int = 10,
+    ) -> list[Log]:
+        """
+        Return the most recent logs.
+        """
+
+        return self.search(
+            order_by=Log.timestamp,
+            descending=True,
+            limit=limit,
+        )

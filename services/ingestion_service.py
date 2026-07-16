@@ -82,16 +82,23 @@ class IngestionService:
 
         logs = []
 
-        for raw_log in raw_logs:
-            log = self.ingest_log(
-                raw_log=raw_log,
-                log_type=log_type,
-            )
+        try:
 
-            logs.append(log)
+            for raw_log in raw_logs:
+                log = self.ingest_log(
+                    raw_log=raw_log,
+                    log_type=log_type,
+                )
 
-        return logs
+                logs.append(log)
 
+            self.log_repository.commit()
+
+            return logs
+
+        except Exception:
+            self.log_repository.rollback()
+            raise
     def ingest_file(
         self,
         file_path: str,
@@ -110,9 +117,9 @@ class IngestionService:
             Number of imported log entries.
         """
 
-        imported_count = 0
-
         path = Path(file_path)
+
+        raw_logs = []
 
         with path.open(
             mode="r",
@@ -123,14 +130,12 @@ class IngestionService:
 
                 raw_log = line.strip()
 
-                if not raw_log:
-                    continue
+                if raw_log:
+                    raw_logs.append(raw_log)
 
-                self.ingest_log(
-                    raw_log=raw_log,
-                    log_type=log_type,
-                )
+        logs = self.ingest_logs(
+            raw_logs=raw_logs,
+            log_type=log_type,
+        )
 
-                imported_count += 1
-
-        return imported_count
+        return len(logs)
