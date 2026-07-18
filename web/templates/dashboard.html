@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<h3>Overview</h3>
+
+<ul>
+    <li><strong>Total Logs:</strong> {{ total_logs }}</li>
+</ul>
+
+<h3>Logs by Type</h3>
+
+<ul>
+{% for log_type, count in logs_by_type.items() %}
+    <li>{{ log_type }} : {{ count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Logs by Status</h3>
+
+<ul>
+{% for status, count in logs_by_status.items() %}
+    <li>{{ status }} : {{ count }}</li>
+{% endfor %}
+</ul>
+
+<h3>Recent Logs</h3>
+
+<table border="1" cellpadding="5">
+
+<thead>
+<tr>
+    <th>ID</th>
+    <th>Time</th>
+    <th>Event</th>
+    <th>User</th>
+    <th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for log in recent_logs %}
+<tr>
+    <td>{{ log.log_id }}</td>
+    <td>{{ log.timestamp }}</td>
+    <td>{{ log.event_id }}</td>
+    <td>{{ log.username }}</td>
+    <td>{{ log.status }}</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

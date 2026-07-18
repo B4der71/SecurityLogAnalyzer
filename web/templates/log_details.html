@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Log Details
+{% endblock %}
+
+{% block content %}
+
+<h2>Log Details</h2>
+
+<table border="1" cellpadding="5">
+
+    <tr>
+        <th>Log ID</th>
+        <td>{{ log.log_id }}</td>
+    </tr>
+
+    <tr>
+        <th>Timestamp</th>
+        <td>{{ log.timestamp }}</td>
+    </tr>
+
+    <tr>
+        <th>Log Type</th>
+        <td>{{ log.log_type }}</td>
+    </tr>
+
+    <tr>
+        <th>Source</th>
+        <td>{{ log.source }}</td>
+    </tr>
+
+    <tr>
+        <th>Event ID</th>
+        <td>{{ log.event_id }}</td>
+    </tr>
+
+    <tr>
+        <th>Username</th>
+        <td>{{ log.username }}</td>
+    </tr>
+
+    <tr>
+        <th>Hostname</th>
+        <td>{{ log.hostname }}</td>
+    </tr>
+
+    <tr>
+        <th>Protocol</th>
+        <td>{{ log.protocol }}</td>
+    </tr>
+
+    <tr>
+        <th>Source IP</th>
+        <td>{{ log.source_ip }}</td>
+    </tr>
+
+    <tr>
+        <th>Source Port</th>
+        <td>{{ log.source_port }}</td>
+    </tr>
+
+    <tr>
+        <th>Destination IP</th>
+        <td>{{ log.destination_ip }}</td>
+    </tr>
+
+    <tr>
+        <th>Destination Port</th>
+        <td>{{ log.destination_port }}</td>
+    </tr>
+
+    <tr>
+        <th>Status</th>
+        <td>{{ log.status }}</td>
+    </tr>
+
+    <tr>
+        <th>Created At</th>
+        <td>{{ log.created_at }}</td>
+    </tr>
+
+</table>
+
+<h3>Raw Log</h3>
+
+<pre>{{ log.raw_log }}</pre>
+
+<p>
+    <a href="{{ url_for('logs_page') }}">
+        ← Back
+    </a>
+</p>
+
+{% endblock %}

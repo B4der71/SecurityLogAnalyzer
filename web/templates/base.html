@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Security Log Analyzer{% endblock %}</title>
+</head>
+
+<body>
+
+<header>
+    <h1>Security Log Analyzer</h1>
+
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+        <a href="{{ url_for('upload_page') }}">Upload Logs</a> |
+        <a href="{{ url_for('logs_page') }}">Logs</a>
+    </nav>
+
+    <br>
+
+    
+
+    <hr>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p style="color: {{ 'green' if category == 'success' else 'red' }};">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+</body>
+
+</html>

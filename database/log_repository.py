@@ -127,6 +127,23 @@ class LogRepository:
 
         return self.session.scalar(statement) or 0
     
+    def count_search(
+        self,
+        filters: list[ColumnElement[bool]] | None = None,
+    ) -> int:
+        """
+        Count logs matching the given filters.
+        """
+
+        statement = select(
+            func.count(Log.log_id)
+        )
+
+        if filters:
+            statement = statement.where(*filters)
+
+        return self.session.scalar(statement) or 0
+    
     def count_by_log_type(self) -> dict[str, int]:
         """
         Return the number of logs for each log type.

@@ -23,15 +23,11 @@ class SearchService:
     def search(
         self,
         query: str,
+        page: int = 1,
+        page_size: int = 50,
     ) -> list[Log]:
         """
         Search logs using the custom query language.
-
-        Args:
-            query: Search query.
-
-        Returns:
-            List of matching logs.
         """
 
         lexer = Lexer(query)
@@ -44,7 +40,32 @@ class SearchService:
 
         expression = self.builder.build(ast)
 
+        offset = (page - 1) * page_size
+
         return self.repository.search(
             filters=[expression],
+            limit=page_size,
+            offset=offset,
         )
     
+    def count(
+        self,
+        query: str,
+    ) -> int:
+        """
+        Count logs matching the custom search query.
+        """
+
+        lexer = Lexer(query)
+
+        tokens = lexer.tokenize()
+
+        parser = Parser(tokens)
+
+        ast = parser.parse()
+
+        expression = self.builder.build(ast)
+
+        return self.repository.count_search(
+            filters=[expression],
+        )
