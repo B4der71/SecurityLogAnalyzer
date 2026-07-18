@@ -1,6 +1,6 @@
 #from parsers.apache_parser import ApacheParser
 #from parsers.linux_parser import LinuxParser
-from parsers.windows_parser import WindowsParser
+from parsers.windows.windows_parser import WindowsParser
 
 
 class ParserFactory:

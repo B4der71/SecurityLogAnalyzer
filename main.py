@@ -14,7 +14,7 @@ def main():
         service = IngestionService(repository)
 
         imported = service.ingest_file(
-            file_path="data/raw_logs/windows.json",
+            file_path="/media/sf_ctfshare/sampile/Security.evtx",
             log_type="windows",
         )
 

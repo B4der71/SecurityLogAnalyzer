@@ -3,6 +3,7 @@ from pathlib import Path
 from database.log_repository import LogRepository
 from database.models import Log
 from parsers.parser_factory import ParserFactory
+from parsers.windows.evtx_reader import EVTXReader
 
 
 class IngestionService:
@@ -99,6 +100,8 @@ class IngestionService:
         except Exception:
             self.log_repository.rollback()
             raise
+        
+
     def ingest_file(
         self,
         file_path: str,
@@ -118,6 +121,45 @@ class IngestionService:
         """
 
         path = Path(file_path)
+
+        parser = self.parser_factory.create_parser(log_type)
+
+        # ------------------------------------------------------
+        # Windows EVTX
+        # ------------------------------------------------------
+
+        if path.suffix.lower() == ".evtx":
+
+            reader = EVTXReader()
+
+            logs = []
+
+            try:
+
+                TOTAL_EVENTS = 62031
+
+                for i, xml_event in enumerate(reader.read(str(path)), start=1):
+
+                    log = parser.parse_xml(xml_event)
+
+                    self.log_repository.add(log)
+
+                    logs.append(log)
+
+                    if i % 1000 == 0:
+                        print(f"Processed {i}/{TOTAL_EVENTS} events...")
+
+                self.log_repository.commit()
+
+                return len(logs)
+
+            except Exception:
+                self.log_repository.rollback()
+                raise
+
+        # ------------------------------------------------------
+        # Text / JSON logs
+        # ------------------------------------------------------
 
         raw_logs = []
 

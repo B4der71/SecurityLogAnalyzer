@@ -17,7 +17,6 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.dialects.postgresql import INET
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -113,6 +112,19 @@ class Log(Base):
         nullable=False,
     )
 
+    # Windows channel (Security, System, Application, Sysmon, ...)
+    channel: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        index=True,
+    )
+    # Component that generated the event
+    provider: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        index=True,
+    )
+
     # Original log file name
     source: Mapped[str] = mapped_column(
         String(255),
@@ -145,7 +157,7 @@ class Log(Base):
 
     # Source IP Address
     source_ip: Mapped[str | None] = mapped_column(
-        INET,
+        String(45),
         nullable=True,
         index=True,
     )
@@ -158,7 +170,7 @@ class Log(Base):
 
     # Destination IP Address
     destination_ip: Mapped[str | None] = mapped_column(
-        INET,
+        String(45),
         nullable=True,
         index=True,
     )
