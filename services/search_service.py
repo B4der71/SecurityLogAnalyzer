@@ -44,6 +44,8 @@ class SearchService:
 
         return self.repository.search(
             filters=[expression],
+            order_by=Log.timestamp,
+            descending=False,
             limit=page_size,
             offset=offset,
         )

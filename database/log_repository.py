@@ -194,8 +194,12 @@ class LogRepository:
         Return the most recent logs.
         """
 
-        return self.search(
-            order_by=Log.timestamp,
-            descending=True,
-            limit=limit,
+        statement = (
+            select(Log)
+            .order_by(desc(Log.timestamp))
+            .limit(limit)
         )
+
+        result = self.session.execute(statement)
+
+        return result.scalars().all()

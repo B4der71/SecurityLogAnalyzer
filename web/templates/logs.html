@@ -6,22 +6,23 @@ Logs
 
 {% block content %}
 
-<h2>
-    {% if query %}
-        Search Logs
-    {% else %}
-        All Logs
-    {% endif %}
-</h2>
+<h2>Browse Logs</h2>
 
-<form method="GET" action="{{ url_for('logs_page') }}">
+<div class="card">
+
+<form
+    method="GET"
+    action="{{ url_for('logs_page') }}"
+>
+
+    <label for="q"><strong>Search Query</strong></label>
 
     <input
+        id="q"
         type="text"
         name="q"
         value="{{ query }}"
         placeholder='event_id = 4625 AND status = "Failure"'
-        size="50"
     >
 
     <button type="submit">
@@ -29,7 +30,10 @@ Logs
     </button>
 
     {% if query %}
-        <a href="{{ url_for('logs_page') }}">
+        <a
+            class="btn"
+            href="{{ url_for('logs_page') }}"
+        >
             Clear
         </a>
     {% endif %}
@@ -40,142 +44,150 @@ Logs
 
 <p>
 
-{% if query %}
-    Search results for:
-    <strong>{{ query }}</strong>
-    <br>
-{% endif %}
-
-Total Logs: {{ total_logs }}
+<strong>Total Logs:</strong> {{ total_logs }}
 
 {% if total_logs > 0 %}
-    <br>
-    Showing
-    {{ ((page - 1) * page_size) + 1 }}
-    -
-    {{ [page * page_size, total_logs] | min }}
-    of
-    {{ total_logs }}
+
+|
+
+Showing
+
+{{ ((page-1) * page_size) + 1 }}
+
+-
+
+{{ [page * page_size, total_logs] | min }}
+
 {% endif %}
 
 </p>
 
-{% if logs %}
+</div>
 
-<table border="1" cellpadding="5">
 
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Timestamp</th>
-            <th>Log Type</th>
-            <th>Source</th>
-            <th>Event ID</th>
-            <th>Username</th>
-            <th>Hostname</th>
-            <th>Source IP</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
+<div class="card">
 
-    <tbody>
+<table>
 
-    {% for log in logs %}
+<thead>
 
-        <tr>
-            <td>{{ log.log_id }}</td>
-            <td>{{ log.timestamp }}</td>
-            <td>{{ log.log_type }}</td>
-            <td>{{ log.source }}</td>
-            <td>{{ log.event_id }}</td>
-            <td>{{ log.username }}</td>
-            <td>{{ log.hostname }}</td>
-            <td>{{ log.source_ip }}</td>
-            <td>{{ log.status }}</td>
-            <td>
-                <a href="{{ url_for('log_details', log_id=log.log_id) }}">
-                    View
-                </a>
-            </td>
-        </tr>
+<tr>
 
-    {% endfor %}
 
-    </tbody>
+<th>Timestamp</th>
+
+<th>Type</th>
+
+<th>Event</th>
+
+<th>User</th>
+
+<th>Status</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for log in logs %}
+
+<tr>
+
+
+<td>{{ log.timestamp }}</td>
+
+<td>{{ log.log_type }}</td>
+
+<td>{{ log.event_id }}</td>
+
+<td>{{ log.username or "-" }}</td>
+
+<td>{{ log.status or "-" }}</td>
+
+<td>
+
+<a
+class="btn"
+href="{{ url_for('log_details', log_id=log.log_id) }}"
+>
+
+View
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
 
 </table>
 
-{% if total_pages > 1 %}
+{% if not logs %}
 
-<div>
+<p>No logs found.</p>
 
-    {% if page > 1 %}
-        <a href="{{ url_for(
-                'logs_page',
-                q=query,
-                page=page - 1
-            ) }}">
-            &laquo; Previous
-        </a>
-    {% endif %}
-
-    {% for page_number in range(1, total_pages + 1) %}
-
-        {% if
-            page_number == 1
-            or page_number == total_pages
-            or (page_number >= page - 2 and page_number <= page + 2)
-        %}
-
-            {% if page_number == page %}
-
-                <strong>[{{ page_number }}]</strong>
-
-            {% else %}
-
-                <a href="{{ url_for(
-                        'logs_page',
-                        q=query,
-                        page=page_number
-                    ) }}">
-                    {{ page_number }}
-                </a>
-
-            {% endif %}
-
-        {% elif
-            page_number == page - 3
-            or page_number == page + 3
-        %}
-
-            ...
-
-        {% endif %}
-
-    {% endfor %}
-
-    {% if page < total_pages %}
-        <a href="{{ url_for(
-                'logs_page',
-                q=query,
-                page=page + 1
-            ) }}">
-            Next &raquo;
-        </a>
-    {% endif %}
+{% endif %}
 
 </div>
 
+{% if total_pages > 1 %}
+
+<div
+style="
+margin-top:20px;
+display:flex;
+gap:10px;
+align-items:center;
+"
+>
+
+{% if page > 1 %}
+
+<a
+class="btn"
+href="{{ url_for(
+'logs_page',
+q=query,
+page=page-1
+) }}"
+>
+
+← Previous
+
+</a>
+
 {% endif %}
 
-{% else %}
+<span>
 
-{% if query %}
-    <p>No logs matched your search.</p>
-{% else %}
-    <p>No logs available.</p>
+Page {{ page }} of {{ total_pages }}
+
+</span>
+
+{% if page < total_pages %}
+
+<a
+class="btn"
+href="{{ url_for(
+'logs_page',
+q=query,
+page=page+1
+) }}"
+>
+
+Next →
+
+</a>
+
 {% endif %}
+
+</div>
 
 {% endif %}
 

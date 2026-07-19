@@ -8,56 +8,138 @@ Dashboard
 
 <h2>Dashboard</h2>
 
-<h3>Overview</h3>
+<div class="dashboard-grid">
 
-<ul>
-    <li><strong>Total Logs:</strong> {{ total_logs }}</li>
-</ul>
+    <div class="stat-card">
+        <h2>{{ total_logs }}</h2>
+        <p>Total Logs</p>
+    </div>
 
-<h3>Logs by Type</h3>
+    <div class="stat-card">
+        <h2>{{ logs_by_type|length }}</h2>
+        <p>Log Types</p>
+    </div>
 
-<ul>
-{% for log_type, count in logs_by_type.items() %}
-    <li>{{ log_type }} : {{ count }}</li>
-{% endfor %}
-</ul>
+    <div class="stat-card">
+        <h2>{{ logs_by_status|length }}</h2>
+        <p>Status Types</p>
+    </div>
 
-<h3>Logs by Status</h3>
+</div>
 
-<ul>
-{% for status, count in logs_by_status.items() %}
-    <li>{{ status }} : {{ count }}</li>
-{% endfor %}
-</ul>
+<div class="card">
 
-<h3>Recent Logs</h3>
+    <h3>Logs by Type</h3>
 
-<table border="1" cellpadding="5">
+    <table>
 
-<thead>
-<tr>
-    <th>ID</th>
-    <th>Time</th>
-    <th>Event</th>
-    <th>User</th>
-    <th>Status</th>
-</tr>
-</thead>
+        <thead>
+            <tr>
+                <th>Log Type</th>
+                <th>Count</th>
+            </tr>
+        </thead>
 
-<tbody>
+        <tbody>
 
-{% for log in recent_logs %}
-<tr>
-    <td>{{ log.log_id }}</td>
-    <td>{{ log.timestamp }}</td>
-    <td>{{ log.event_id }}</td>
-    <td>{{ log.username }}</td>
-    <td>{{ log.status }}</td>
-</tr>
-{% endfor %}
+        {% for log_type, count in logs_by_type.items() %}
 
-</tbody>
+            <tr>
+                <td>{{ log_type }}</td>
+                <td>{{ count }}</td>
+            </tr>
 
-</table>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div class="card">
+
+    <h3>Logs by Status</h3>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for status, count in logs_by_status.items() %}
+
+            <tr>
+                <td>{{ status }}</td>
+                <td>{{ count }}</td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<div class="card">
+
+    <h3>Recent Logs</h3>
+
+    <table>
+
+        <thead>
+
+        <tr>
+            <th>Timestamp</th>
+            <th>Event ID</th>
+            <th>User</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for log in recent_logs %}
+
+        <tr>
+
+            
+
+            <td>{{ log.timestamp }}</td>
+
+            <td>{{ log.event_id }}</td>
+
+            <td>{{ log.username or "-" }}</td>
+
+            <td>{{ log.status or "-" }}</td>
+
+            <td>
+
+                <a
+                    class="btn"
+                    href="{{ url_for('log_details', log_id=log.log_id) }}"
+                >
+                    View
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
 
 {% endblock %}

@@ -85,14 +85,25 @@ def create_app() -> Flask:
             if uploaded_file is None or uploaded_file.filename == "":
                 return "No file selected.", 400
 
-            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            suffix = os.path.splitext(uploaded_file.filename)[1]
+
+            with tempfile.NamedTemporaryFile(
+                delete=False,
+                suffix=suffix,
+            ) as temp_file:
+
                 uploaded_file.save(temp_file.name)
                 temp_path = temp_file.name
 
             try:
+                log_type = request.form.get(
+                    "log_type",
+                    "windows",
+                )
+
                 imported_count = ingestion_service.ingest_file(
                     file_path=temp_path,
-                    log_type="windows",
+                    log_type=log_type,
                 )
 
                 flash(
@@ -171,7 +182,7 @@ def create_app() -> Flask:
 
             logs = repository.search(
                 order_by=Log.timestamp,
-                descending=True,
+                descending=False,
                 limit=page_size,
                 offset=offset,
             )

@@ -8,19 +8,19 @@ Upload Logs
 
 <h2>Upload Log File</h2>
 
+<div class="card">
 
-{% if success %}
-<p style="color: green;">
-    {{ success }}
+<p>
+
+Import log files into the Security Log Analyzer.
+
+Supported formats:
+
+<strong>.evtx</strong>,
+<strong>.json</strong>,
+<strong>.jsonl</strong>
+
 </p>
-{% endif %}
-
-{% if error %}
-<p style="color: red;">
-    {{ error }}
-</p>
-{% endif %}
-
 
 <form
     action="{{ url_for('upload_page') }}"
@@ -28,20 +28,72 @@ Upload Logs
     enctype="multipart/form-data"
 >
 
-    <p>
-        <input
-            type="file"
-            name="log_file"
-            required
-        >
-    </p>
+    <label for="log_type">
 
-    <p>
-        <button type="submit">
-            Upload
-        </button>
-    </p>
+        <strong>Log Type</strong>
+
+    </label>
+
+    <select
+        id="log_type"
+        name="log_type"
+    >
+        <option value="windows">
+            Windows Event Logs
+        </option>
+    </select>
+
+    <label for="log_file">
+
+        <strong>Select File</strong>
+
+    </label>
+
+    <input
+        id="log_file"
+        type="file"
+        name="log_file"
+        required
+    >
+
+    <button type="submit">
+
+        Upload Logs
+
+    </button>
 
 </form>
+
+</div>
+
+<div class="card">
+
+<h3>Supported Formats</h3>
+
+<table>
+
+<tr>
+    <th>Extension</th>
+    <th>Description</th>
+</tr>
+
+<tr>
+    <td>.evtx</td>
+    <td>Windows Event Log</td>
+</tr>
+
+<tr>
+    <td>.json</td>
+    <td>Structured JSON Logs</td>
+</tr>
+
+<tr>
+    <td>.jsonl</td>
+    <td>JSON Lines</td>
+</tr>
+
+</table>
+
+</div>
 
 {% endblock %}
