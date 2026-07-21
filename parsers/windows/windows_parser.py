@@ -7,6 +7,12 @@ from typing import Any
 from database.models import Log
 from parsers.parser import BaseParser
 
+from parsers.windows.handlers import (
+    parse_successful_login,
+    parse_failed_login,
+    parse_generic,
+)
+
 
 class WindowsParser(BaseParser):
     """
@@ -44,12 +50,47 @@ class WindowsParser(BaseParser):
     )
 
     USERNAME_FIELDS = (
-        "TargetUserName",
         "SubjectUserName",
         "User",
         "AccountName",
     )
 
+    TARGET_USERNAME_FIELDS = (
+        "TargetUserName",
+    )
+
+    DOMAIN_FIELDS = (
+        "TargetDomainName",
+        "SubjectDomainName",
+    )
+
+    IMAGE_FIELDS = (
+        "Image",
+        "ProcessName",
+    )
+        
+    PARENT_IMAGE_FIELDS = (
+        "ParentImage",
+        "ParentProcessName",
+    )
+
+    COMMAND_LINE_FIELDS = (
+        "CommandLine",
+    )
+
+    PROCESS_ID_FIELDS = (
+        "ProcessId",
+        "NewProcessId",
+    )
+
+    PARENT_PROCESS_ID_FIELDS = (
+        "ParentProcessId",
+    )
+
+    LOGON_TYPE_FIELDS = (
+        "LogonType",
+    )
+    
     SOURCE_IP_FIELDS = (
         "IpAddress",
         "ClientAddress",
@@ -81,8 +122,8 @@ class WindowsParser(BaseParser):
 
         # Authentication Events
         handlers.update({
-            4624: self._parse_successful_login,
-            4625: self._parse_failed_login,
+            4624: parse_successful_login,
+            4625: parse_failed_login,
         })
 
         return handlers
@@ -112,9 +153,9 @@ class WindowsParser(BaseParser):
         handler = self.event_handlers.get(event_id)
 
         if handler:
-            return handler(data, raw_log)
+            return handler(self, data, raw_log)
 
-        return self._parse_generic(data, raw_log)
+        return parse_generic(self, data, raw_log)
     
     def parse_xml(self, xml_event: str) -> Log:
         """
@@ -137,9 +178,9 @@ class WindowsParser(BaseParser):
         handler = self.event_handlers.get(event_id)
 
         if handler:
-            return handler(data, xml_event)
+            return handler(self, data, xml_event)
 
-        return self._parse_generic(data, xml_event)
+        return parse_generic(self, data, xml_event)
 
     # ==========================================================
     # Shared Helpers
@@ -315,116 +356,8 @@ class WindowsParser(BaseParser):
                 data,
                 *self.HOSTNAME_FIELDS,
             ),
+            
+            event_data=data,
 
             raw_log=raw_log,
         )
-
-    # ==========================================================
-    # Authentication Events
-    # ==========================================================
-
-    def _parse_successful_login(
-        self,
-        data: dict[str, Any],
-        raw_log: str,
-    ) -> Log:
-        """
-        Event ID 4624
-        Successful account logon.
-        """
-
-        log = self._build_base_log(data, raw_log)
-
-        log.username = self._get(
-            data,
-            *self.USERNAME_FIELDS,
-        )
-
-        log.source_ip = self._get(
-            data,
-            *self.SOURCE_IP_FIELDS,
-        )
-
-        log.source_port = self._normalize_port(
-            self._get(
-                data,
-                *self.SOURCE_PORT_FIELDS,
-            )
-        )
-
-        log.status = "Success"
-
-        return log
-
-    def _parse_failed_login(
-        self,
-        data: dict[str, Any],
-        raw_log: str,
-    ) -> Log:
-        """
-        Event ID 4625
-        Failed account logon.
-        """
-
-        log = self._build_base_log(data, raw_log)
-
-        log.username = self._get(
-            data,
-            *self.USERNAME_FIELDS,
-        )
-
-        log.source_ip = self._get(
-            data,
-            *self.SOURCE_IP_FIELDS,
-        )
-
-        log.source_port = self._normalize_port(
-            self._get(
-                data,
-                *self.SOURCE_PORT_FIELDS,
-            )
-        )
-
-        log.status = "Failure"
-
-        return log
-
-    # ==========================================================
-    # Generic Events
-    # ==========================================================
-
-    def _parse_generic(
-        self,
-        data: dict[str, Any],
-        raw_log: str,
-    ) -> Log:
-        """
-        Parse unsupported Windows events.
-        """
-
-        log = self._build_base_log(data, raw_log)
-
-        log.username = self._get(
-            data,
-            *self.USERNAME_FIELDS,
-        )
-
-        log.source_ip = self._get(
-            data,
-            *self.SOURCE_IP_FIELDS,
-        )
-
-        log.source_port = self._normalize_port(
-            self._get(
-                data,
-                *self.SOURCE_PORT_FIELDS,
-            )
-        )
-
-        log.status = self._get(
-            data,
-            "Status",
-            default="Unknown",
-        )
-
-        return log

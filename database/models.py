@@ -22,6 +22,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 
 # Local Application
 from database.database import Base, engine
@@ -143,6 +144,16 @@ class Log(Base):
         nullable=True,
         index=True,
     )
+    target_username: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+        index=True,
+    )
+
+    domain: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
 
     hostname: Mapped[str | None] = mapped_column(
         String(100),
@@ -181,9 +192,50 @@ class Log(Base):
         nullable=True,
     )
 
+    # Process
+    image: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+        index=True,
+    )
+
+    parent_image: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    command_line: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    # Process IDs
+    process_id: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+        index=True,
+    )
+
+    parent_process_id: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    # Authentication
+    logon_type: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+
     # Event status
     status: Mapped[str | None] = mapped_column(
         String(30),
+        nullable=True,
+    )
+
+    event_data: Mapped[dict | None] = mapped_column(
+        JSONB,
         nullable=True,
     )
 
