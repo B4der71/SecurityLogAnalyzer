@@ -65,3 +65,61 @@ def test_rule_loader():
     assert rule.message == "Failed Login"
     assert rule.severity == "high"
     assert rule.sid == 1001
+
+
+from detection.rule_engine import RuleEngine
+from detection.rule_loader import RuleLoader
+
+
+def test_rule_engine_creation():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    assert engine.rules == rules
+
+def test_detect_returns_list():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4625
+    }
+
+    alerts = engine.detect(log)
+
+    assert isinstance(alerts, list)
+
+
+def test_detect_matching_rule():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4625
+    }
+
+    matches = engine.detect(log)
+
+    assert len(matches) == 1
+    assert matches[0].sid == 1001
+    assert matches[0].message == "Failed Login"
+
+def test_detect_no_match():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4688
+    }
+
+    matches = engine.detect(log)
+
+    assert len(matches) == 0
