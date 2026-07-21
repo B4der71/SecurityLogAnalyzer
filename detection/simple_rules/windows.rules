@@ -1,0 +1,6 @@
+alert windows (
+    event_id:4625;
+    msg:"Failed Login";
+    severity:high;
+    sid:1001;
+)
