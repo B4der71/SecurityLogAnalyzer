@@ -44,6 +44,7 @@ class RuleParser:
         severity = "low"
         sid = 0
         threshold = {}
+        milestones = []
 
         # Read each line
         for line in body.split(";"):
@@ -78,6 +79,9 @@ class RuleParser:
             elif key == "seconds":
                 threshold["seconds"] = int(value)
 
+            elif key == "milestones":
+                milestones = [int(x.strip()) for x in value.split(",")]
+            
             elif key == "track":
                 threshold["track"] = value
 
@@ -86,6 +90,7 @@ class RuleParser:
             source=source,
             conditions=conditions,
             threshold=threshold if threshold else None,
+            milestones=milestones,
             message=message,
             severity=severity,
             sid=sid,

@@ -384,6 +384,25 @@ def test_threshold_rule_escalates_at_100():
     assert alerts[0].sid == 2001
     assert alerts[1].sid == 2001
 
+def test_parser_parses_milestones():
+    parser = RuleParser()
+
+    text = """
+    alert windows (
+        event_id:4625;
+        threshold:5;
+        seconds:60;
+        track:by_src;
+        milestones:50,500;
+        msg:"Possible Brute Force";
+        severity:critical;
+        sid:2001;
+    )
+    """
+
+    rule = parser.parse(text)
+
+    assert rule.milestones == [50, 500]
 
 
 

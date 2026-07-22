@@ -72,11 +72,10 @@ class RuleEngine:
 
         milestone = None
 
-        if count == rule.threshold["count"]:
-            milestone = rule.threshold["count"]
+        trigger_points = [rule.threshold["count"]] + rule.milestones
 
-        elif count == 100:
-            milestone = 100
+        if count in trigger_points:
+            milestone = count
 
         if milestone is None:
             return None

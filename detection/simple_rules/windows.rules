@@ -10,6 +10,7 @@ alert windows (
     threshold:5;
     seconds:60;
     track:by_src;
+    milestones:100,1000;
     msg:"Possible Brute Force";
     severity:critical;
     sid:2001;
