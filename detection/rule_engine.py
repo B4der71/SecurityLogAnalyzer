@@ -58,6 +58,21 @@ class RuleEngine:
 
         key = self._build_tracking_key(rule, log)
 
+        self.state_manager.add_event(
+            key,
+            {
+                "timestamp": log["timestamp"]
+            }
+        )
+
+        count = self.state_manager.count_recent_events(
+            key,
+            rule.threshold["seconds"]
+        )
+
+        if count >= rule.threshold["count"]:
+            return rule
+
         return None
     
     def _build_tracking_key(self, rule, log):

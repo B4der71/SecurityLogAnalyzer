@@ -87,7 +87,8 @@ def test_detect_returns_list():
 
     log = {
         "event_id": 4625,
-        "source_ip": "192.168.1.20"
+        "source_ip": "192.168.1.20",
+        "timestamp": datetime.now()
     }
 
     alerts = engine.detect(log)
@@ -103,7 +104,8 @@ def test_detect_matching_rule():
 
     log = {
         "event_id": 4625,
-        "source_ip": "192.168.1.20"
+        "source_ip": "192.168.1.20",
+        "timestamp": datetime.now()
     }
 
     matches = engine.detect(log)
@@ -149,7 +151,8 @@ def test_detector_detect():
 
     log = {
         "event_id": 4625,
-        "source_ip": "192.168.1.20"
+        "source_ip": "192.168.1.20",
+        "timestamp": datetime.now()
     }
 
     detections = detector.detect(log)
@@ -304,9 +307,54 @@ def test_build_tracking_key():
     assert key == "2001:192.168.1.20"
 
 
+from datetime import datetime
 
 
+def test_threshold_rule_not_triggered_before_limit():
+    loader = RuleLoader()
+    rules = loader.load_rules()
 
+    threshold_rule = next(rule for rule in rules if rule.threshold)
+
+    engine = RuleEngine([threshold_rule])
+
+    log = {
+        "event_id": 4625,
+        "source_ip": "192.168.1.20",
+        "timestamp": datetime.now()
+    }
+
+    result = None
+
+    for _ in range(4):
+        result = engine.detect(log)
+
+    assert result == []
+
+from datetime import datetime
+
+
+def test_threshold_rule_triggers_at_limit():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    threshold_rule = next(rule for rule in rules if rule.threshold)
+
+    engine = RuleEngine([threshold_rule])
+
+    log = {
+        "event_id": 4625,
+        "source_ip": "192.168.1.20",
+        "timestamp": datetime.now()
+    }
+
+    result = []
+
+    for _ in range(5):
+        result = engine.detect(log)
+
+    assert len(result) == 1
+    assert result[0].sid == 2001
 
 
 
