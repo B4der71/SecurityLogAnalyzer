@@ -4,3 +4,13 @@ alert windows (
     severity:high;
     sid:1001;
 )
+
+alert windows (
+    event_id:4625;
+    threshold:5;
+    seconds:60;
+    track:by_src;
+    msg:"Possible Brute Force";
+    severity:critical;
+    sid:2001;
+)

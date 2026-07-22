@@ -43,6 +43,7 @@ class RuleParser:
         message = ""
         severity = "low"
         sid = 0
+        threshold = {}
 
         # Read each line
         for line in body.split(";"):
@@ -70,12 +71,21 @@ class RuleParser:
 
             elif key == "sid":
                 sid = int(value)
+            
+            elif key == "threshold":
+                threshold["count"] = int(value)
+
+            elif key == "seconds":
+                threshold["seconds"] = int(value)
+
+            elif key == "track":
+                threshold["track"] = value
 
         return Rule(
             action=action,
             source=source,
             conditions=conditions,
-            threshold=None,
+            threshold=threshold if threshold else None,
             message=message,
             severity=severity,
             sid=sid,

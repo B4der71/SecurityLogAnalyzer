@@ -55,7 +55,7 @@ def test_rule_loader():
 
     rules = loader.load_rules()
 
-    assert len(rules) == 1
+    assert len(rules) == 2
 
     rule = rules[0]
 
@@ -86,7 +86,8 @@ def test_detect_returns_list():
     engine = RuleEngine(rules)
 
     log = {
-        "event_id": 4625
+        "event_id": 4625,
+        "source_ip": "192.168.1.20"
     }
 
     alerts = engine.detect(log)
@@ -101,7 +102,8 @@ def test_detect_matching_rule():
     engine = RuleEngine(rules)
 
     log = {
-        "event_id": 4625
+        "event_id": 4625,
+        "source_ip": "192.168.1.20"
     }
 
     matches = engine.detect(log)
@@ -146,7 +148,8 @@ def test_detector_detect():
     detector = Detector(rules)
 
     log = {
-        "event_id": 4625
+        "event_id": 4625,
+        "source_ip": "192.168.1.20"
     }
 
     detections = detector.detect(log)
@@ -248,3 +251,131 @@ def test_count_recent_events():
     )
 
     assert count == 2
+
+def test_parse_threshold_rule():
+    parser = RuleParser()
+
+    rule_text = """
+    alert windows (
+        event_id:4625;
+        threshold:5;
+        seconds:60;
+        track:by_src;
+        msg:"Possible Brute Force";
+        severity:critical;
+        sid:2001;
+    )
+    """
+
+    rule = parser.parse(rule_text)
+
+    assert rule.conditions["event_id"] == 4625
+    assert rule.threshold["count"] == 5
+    assert rule.threshold["seconds"] == 60
+    assert rule.threshold["track"] == "by_src"
+    assert rule.message == "Possible Brute Force"
+
+
+from detection.state_manager import StateManager
+
+
+def test_rule_engine_has_state_manager():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    assert isinstance(engine.state_manager, StateManager)
+
+def test_build_tracking_key():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    threshold_rule = next(rule for rule in rules if rule.threshold)
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "source_ip": "192.168.1.20"
+    }
+
+    key = engine._build_tracking_key(threshold_rule, log)
+
+    assert key == "2001:192.168.1.20"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

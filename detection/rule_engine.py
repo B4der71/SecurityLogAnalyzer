@@ -1,3 +1,10 @@
+from detection.state_manager import StateManager
+
+
+
+
+
+
 class RuleEngine:
     """
     Executes detection rules against logs.
@@ -5,6 +12,7 @@ class RuleEngine:
 
     def __init__(self, rules):
         self.rules = rules
+        self.state_manager = StateManager()
 
     def detect(self, log):
         """
@@ -15,7 +23,15 @@ class RuleEngine:
 
         for rule in self.rules:
 
-            if self._matches(rule, log):
+            if not self._matches(rule, log):
+                continue
+
+            if rule.threshold:
+                result = self._handle_threshold_rule(rule, log)
+
+                if result:
+                    matches.append(result)
+            else:
                 matches.append(rule)
 
         return matches
@@ -34,3 +50,24 @@ class RuleEngine:
                 return False
 
         return True
+        
+    def _handle_threshold_rule(self, rule, log):
+        """
+        Process threshold-based rules.
+        """
+
+        key = self._build_tracking_key(rule, log)
+
+        return None
+    
+    def _build_tracking_key(self, rule, log):
+        """
+        Build a unique key used by the StateManager.
+        """
+
+        track = rule.threshold["track"]
+
+        if track == "by_src":
+            return f"{rule.sid}:{log['source_ip']}"
+
+        raise ValueError(f"Unsupported track type: {track}")

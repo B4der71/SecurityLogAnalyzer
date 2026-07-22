@@ -41,3 +41,4 @@ class StateManager:
         self.state[key] = recent_events
 
         return len(recent_events)
+    
