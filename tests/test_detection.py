@@ -1,5 +1,5 @@
 from detection.rules.rule import Rule
-
+from alerts.alert import Alert
 
 def test_rule_creation():
     rule = Rule(
@@ -108,11 +108,18 @@ def test_detect_matching_rule():
         "timestamp": datetime.now()
     }
 
-    matches = engine.detect(log)
+    alerts = engine.detect(log)
 
-    assert len(matches) == 1
-    assert matches[0].sid == 1001
-    assert matches[0].message == "Failed Login"
+    assert len(alerts) == 1
+
+    alert = alerts[0]
+
+    assert isinstance(alert, Alert)
+
+    assert alert.sid == 1001
+    assert alert.title == "Failed Login"
+    assert alert.severity == "high"
+    assert alert.source == "windows"
 
 def test_detect_no_match():
     loader = RuleLoader()
@@ -155,11 +162,16 @@ def test_detector_detect():
         "timestamp": datetime.now()
     }
 
-    detections = detector.detect(log)
+    alerts = detector.detect(log)
 
-    assert len(detections) == 1
-    assert detections[0].sid == 1001
-    assert detections[0].message == "Failed Login"
+    assert len(alerts) == 1
+
+    alert = alerts[0]
+
+    assert alert.sid == 1001
+    assert alert.title == "Failed Login"
+    assert alert.severity == "high"
+    assert alert.source == "windows"
 
 def test_detector_no_detection():
     loader = RuleLoader()

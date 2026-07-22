@@ -1,5 +1,5 @@
 from detection.state_manager import StateManager
-
+from alerts.alert import Alert
 
 
 
@@ -32,7 +32,9 @@ class RuleEngine:
                 if result:
                     matches.append(result)
             else:
-                matches.append(rule)
+                matches.append(
+                    self._create_alert(rule, log)
+                )
 
         return matches
 
@@ -85,7 +87,7 @@ class RuleEngine:
 
         self.state_manager.mark_alerted(key, milestone)
 
-        return rule 
+        return self._create_alert(rule, log)
     
     def _build_tracking_key(self, rule, log):
         """
@@ -98,3 +100,18 @@ class RuleEngine:
             return f"{rule.sid}:{log['source_ip']}"
 
         raise ValueError(f"Unsupported track type: {track}")
+    
+
+    def _create_alert(self, rule, log):
+        """
+        Create an Alert from a matched rule.
+        """
+
+        return Alert(
+            sid=rule.sid,
+            title=rule.message,
+            severity=rule.severity,
+            source=rule.source,
+            timestamp=log["timestamp"],
+            log=log
+        )
