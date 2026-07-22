@@ -70,10 +70,23 @@ class RuleEngine:
             rule.threshold["seconds"]
         )
 
-        if count >= rule.threshold["count"]:
-            return rule
+        milestone = None
 
-        return None
+        if count == rule.threshold["count"]:
+            milestone = rule.threshold["count"]
+
+        elif count == 100:
+            milestone = 100
+
+        if milestone is None:
+            return None
+
+        if self.state_manager.has_alerted(key, milestone):
+            return None
+
+        self.state_manager.mark_alerted(key, milestone)
+
+        return rule 
     
     def _build_tracking_key(self, rule, log):
         """

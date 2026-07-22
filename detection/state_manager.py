@@ -9,6 +9,7 @@ class StateManager:
 
     def __init__(self):
         self.state = defaultdict(list)
+        self.alerted_counts = defaultdict(set)
 
     def add_event(self, key, event):
         """
@@ -42,3 +43,20 @@ class StateManager:
 
         return len(recent_events)
     
+
+    def has_alerted(self, key, milestone):
+        """
+        Check whether an alert has already been generated
+        for this milestone.
+        """
+
+        return milestone in self.alerted_counts[key]
+    
+    def mark_alerted(self, key, milestone):
+        """
+        Record that an alert has been generated
+        for this milestone.
+        """
+
+        self.alerted_counts[key].add(milestone)
+        

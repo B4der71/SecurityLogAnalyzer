@@ -357,7 +357,32 @@ def test_threshold_rule_triggers_at_limit():
     assert result[0].sid == 2001
 
 
+from datetime import datetime
 
+
+def test_threshold_rule_escalates_at_100():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    threshold_rule = next(rule for rule in rules if rule.threshold)
+
+    engine = RuleEngine([threshold_rule])
+
+    log = {
+        "event_id": 4625,
+        "source_ip": "192.168.1.20",
+        "timestamp": datetime.now()
+    }
+
+    alerts = []
+
+    for _ in range(100):
+        alerts.extend(engine.detect(log))
+
+    assert len(alerts) == 2
+
+    assert alerts[0].sid == 2001
+    assert alerts[1].sid == 2001
 
 
 
