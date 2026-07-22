@@ -123,3 +123,48 @@ def test_detect_no_match():
     matches = engine.detect(log)
 
     assert len(matches) == 0
+
+
+from detection.detector import Detector
+from detection.rule_loader import RuleLoader
+from detection.rule_engine import RuleEngine
+
+
+def test_detector_creation():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    detector = Detector(rules)
+
+    assert isinstance(detector.rule_engine, RuleEngine)
+
+
+def test_detector_detect():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    detector = Detector(rules)
+
+    log = {
+        "event_id": 4625
+    }
+
+    detections = detector.detect(log)
+
+    assert len(detections) == 1
+    assert detections[0].sid == 1001
+    assert detections[0].message == "Failed Login"
+
+def test_detector_no_detection():
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    detector = Detector(rules)
+
+    log = {
+        "event_id": 9999
+    }
+
+    detections = detector.detect(log)
+
+    assert len(detections) == 0
