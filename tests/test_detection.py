@@ -168,3 +168,83 @@ def test_detector_no_detection():
     detections = detector.detect(log)
 
     assert len(detections) == 0
+
+from detection.state_manager import StateManager
+
+
+def test_state_manager_creation():
+    manager = StateManager()
+
+    assert len(manager.state) == 0
+
+def test_add_event():
+    manager = StateManager()
+
+    event = {
+        "event_id": 4625
+    }
+
+    manager.add_event("failed_login:192.168.1.20", event)
+
+    assert len(manager.state["failed_login:192.168.1.20"]) == 1
+    assert manager.state["failed_login:192.168.1.20"][0]["event_id"] == 4625
+
+
+def test_get_events():
+    manager = StateManager()
+
+    event1 = {
+        "event_id": 4625
+    }
+
+    event2 = {
+        "event_id": 4625
+    }
+
+    manager.add_event("failed_login:192.168.1.20", event1)
+    manager.add_event("failed_login:192.168.1.20", event2)
+
+    events = manager.get_events("failed_login:192.168.1.20")
+
+    assert len(events) == 2
+    assert events[0]["event_id"] == 4625
+    assert events[1]["event_id"] == 4625
+
+from datetime import datetime, timedelta
+
+
+def test_count_recent_events():
+    manager = StateManager()
+
+    now = datetime.now()
+
+    manager.add_event(
+        "failed_login:192.168.1.20",
+        {
+            "event_id": 4625,
+            "timestamp": now
+        }
+    )
+
+    manager.add_event(
+        "failed_login:192.168.1.20",
+        {
+            "event_id": 4625,
+            "timestamp": now - timedelta(seconds=30)
+        }
+    )
+
+    manager.add_event(
+        "failed_login:192.168.1.20",
+        {
+            "event_id": 4625,
+            "timestamp": now - timedelta(seconds=90)
+        }
+    )
+
+    count = manager.count_recent_events(
+        "failed_login:192.168.1.20",
+        60
+    )
+
+    assert count == 2
