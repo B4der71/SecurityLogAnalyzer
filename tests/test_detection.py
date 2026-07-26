@@ -1,5 +1,6 @@
 from detection.rules.rule import Rule
 from alerts.alert import Alert
+from alerts.alert_manager import AlertManager
 
 def test_rule_creation():
     rule = Rule(
@@ -148,6 +149,7 @@ def test_detector_creation():
     detector = Detector(rules)
 
     assert isinstance(detector.rule_engine, RuleEngine)
+    assert isinstance(detector.alert_manager, AlertManager)
 
 
 def test_detector_detect():
@@ -172,6 +174,13 @@ def test_detector_detect():
     assert alert.title == "Failed Login"
     assert alert.severity == "high"
     assert alert.source == "windows"
+    # Verify the alert was stored by the AlertManager
+    stored_alerts = detector.alert_manager.get_alerts()
+
+    assert len(stored_alerts) == 1
+    assert stored_alerts[0] == alert
+
+    
 
 def test_detector_no_detection():
     loader = RuleLoader()

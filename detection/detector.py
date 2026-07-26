@@ -1,5 +1,5 @@
 from detection.rule_engine import RuleEngine
-
+from alerts.alert_manager import AlertManager
 
 class Detector:
     """
@@ -8,6 +8,7 @@ class Detector:
 
     def __init__(self, rules):
         self.rule_engine = RuleEngine(rules)
+        self.alert_manager = AlertManager()
 
         # Registered detection engines
         self.detectors = [
@@ -16,23 +17,24 @@ class Detector:
 
     def detect(self, log):
         """
-        Run all detection engines.
+        Run all detection engines and correlations.
 
         Returns:
-            List of detections.
+            List[Alert]: Alerts generated for the given log.
         """
-        detections = []
+        alerts = []
 
         for detector in self.detectors:
-            detections.extend(
-                detector.detect(log)
-            )
+            alerts.extend(detector.detect(log))
 
-        detections.extend(
-            self._run_correlations(log, detections)
+        alerts.extend(
+            self._run_correlations(log, alerts)
         )
 
-        return detections
+        for alert in alerts:
+            self.alert_manager.add(alert)
+
+        return alerts
 
     def _run_correlations(self, log, detections):
         """

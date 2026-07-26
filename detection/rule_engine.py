@@ -110,8 +110,10 @@ class RuleEngine:
         return Alert(
             sid=rule.sid,
             title=rule.message,
+            description=rule.message,
             severity=rule.severity,
             source=rule.source,
+            detection_method="rule",
             timestamp=log["timestamp"],
-            log=log
+            log=log,
         )

@@ -258,6 +258,12 @@ class Log(Base):
         cascade="all, delete-orphan",
     )
 
+    alerts: Mapped[list["Alert"]] = relationship(
+        back_populates="log",
+        cascade="all, delete-orphan",
+    )
+
+
 class Prediction(Base):
     """
     Represents the analysis result of a single security log event.
@@ -338,10 +344,7 @@ class Prediction(Base):
         back_populates="predictions",
     )
 
-    alerts: Mapped[list["Alert"]] = relationship(
-        back_populates="prediction",
-        cascade="all, delete-orphan",
-    )
+    
 
 class Alert(Base):
     """
@@ -358,12 +361,19 @@ class Alert(Base):
     )
 
     # Foreign Key -> Predictions
-    prediction_id: Mapped[int] = mapped_column(
+
+    log_id: Mapped[int] = mapped_column(
         ForeignKey(
-            "predictions.prediction_id",
+            "logs.log_id",
             ondelete="CASCADE",
         ),
         nullable=False,
+    )
+
+    sid: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+        index=True,
     )
 
     # Alert severity
@@ -385,11 +395,33 @@ class Alert(Base):
         nullable=False,
     )
 
+    source: Mapped[str] = mapped_column(
+        String(30),
+        nullable=False,
+        index=True,
+    )
+
+    detection_method: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        index=True,
+    )
+
+    ml_model: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+
+    ml_confidence: Mapped[Decimal | None] = mapped_column(
+        Numeric(5, 2),
+        nullable=True,
+    )
+
     # Current alert status
     status: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
-        default="Open",
+        default="open",
         index=True,
     )
 
@@ -413,7 +445,7 @@ class Alert(Base):
     )
 
     # Relationship
-    prediction: Mapped["Prediction"] = relationship(
+    log: Mapped["Log"] = relationship(
         back_populates="alerts",
     )
 
