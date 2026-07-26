@@ -23,5 +23,20 @@ class Alert:
 
     log: Any
 
+    first_seen: datetime | None = None
+    last_seen: datetime | None = None
+
+    occurrences: int = 1
+
+    status: str = "active"
+
     ml_model: str | None = None
     ml_confidence: float | None = None
+
+    def __post_init__(self):
+
+        if self.first_seen is None:
+            self.first_seen = self.timestamp
+
+        if self.last_seen is None:
+            self.last_seen = self.timestamp

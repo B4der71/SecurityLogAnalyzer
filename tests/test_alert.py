@@ -24,6 +24,31 @@ def test_create_alert():
     assert alert.severity == "critical"
     assert alert.source == "windows"
 
+from datetime import datetime
+
+from alerts.alert import Alert
+
+
+def test_alert_initializes_aggregation_fields():
+
+    timestamp = datetime.now()
+
+    alert = Alert(
+        sid=1001,
+        title="Failed Login",
+        description="Failed Login",
+        severity="high",
+        source="windows",
+        detection_method="rule",
+        timestamp=timestamp,
+        log={},
+    )
+
+    assert alert.occurrences == 1
+    assert alert.status == "active"
+    assert alert.first_seen == timestamp
+    assert alert.last_seen == timestamp
+
 
 
 
@@ -97,12 +122,123 @@ def test_get_alerts():
 
     alerts = manager.get_alerts()
 
-    assert len(alerts) == 2
+    assert len(alerts) == 1
     assert alerts[0] == alert1
-    assert alerts[1] == alert2
+
+def test_duplicate_alerts_are_not_added_twice():
+
+    manager = AlertManager()
+
+    alert = Alert(
+        sid=1001,
+        title="Failed Login",
+        description="Failed Login",
+        severity="high",
+        source="windows",
+        detection_method="rule",
+        timestamp=datetime.now(),
+        log={
+            "username": "admin",
+            "source_ip": "192.168.1.10",
+        },
+    )
+
+    manager.add(alert)
+    manager.add(alert)
+
+    alerts = manager.get_alerts()
+
+    assert len(alerts) == 1
 
 
+def test_different_users_create_different_alerts():
 
+    manager = AlertManager()
+
+    alert1 = Alert(
+        sid=1001,
+        title="Failed Login",
+        description="Failed Login",
+        severity="high",
+        source="windows",
+        detection_method="rule",
+        timestamp=datetime.now(),
+        log={
+            "username": "admin",
+            "source_ip": "192.168.1.10",
+        },
+    )
+
+    alert2 = Alert(
+        sid=1001,
+        title="Failed Login",
+        description="Failed Login",
+        severity="high",
+        source="windows",
+        detection_method="rule",
+        timestamp=datetime.now(),
+        log={
+            "username": "john",
+            "source_ip": "192.168.1.10",
+        },
+    )
+
+    manager.add(alert1)
+    manager.add(alert2)
+
+    assert len(manager.get_alerts()) == 2
+
+
+from datetime import datetime, timedelta
+
+
+def test_duplicate_alert_updates_occurrences_and_last_seen():
+
+    manager = AlertManager()
+
+    first_time = datetime.now()
+    second_time = first_time + timedelta(seconds=10)
+
+    alert1 = Alert(
+        sid=1001,
+        title="Failed Login",
+        description="Failed Login",
+        severity="high",
+        source="windows",
+        detection_method="rule",
+        timestamp=first_time,
+        log={
+            "username": "admin",
+            "source_ip": "192.168.1.10",
+        },
+    )
+
+    alert2 = Alert(
+        sid=1001,
+        title="Failed Login",
+        description="Failed Login",
+        severity="high",
+        source="windows",
+        detection_method="rule",
+        timestamp=second_time,
+        log={
+            "username": "admin",
+            "source_ip": "192.168.1.10",
+        },
+    )
+
+    manager.add(alert1)
+    manager.add(alert2)
+
+    alerts = manager.get_alerts()
+
+    assert len(alerts) == 1
+
+    alert = alerts[0]
+
+    assert alert.occurrences == 2
+    assert alert.first_seen == first_time
+    assert alert.last_seen == second_time
 
 
 
