@@ -56,16 +56,25 @@ def test_rule_loader():
 
     rules = loader.load_rules()
 
-    assert len(rules) == 2
+    assert len(rules) == 3
 
-    rule = rules[0]
+    sids = {rule.sid for rule in rules}
+    assert sids == {1001, 1002, 2001}
 
-    assert rule.action == "alert"
-    assert rule.source == "windows"
-    assert rule.conditions["event_id"] == 4625
-    assert rule.message == "Failed Login"
-    assert rule.severity == "high"
-    assert rule.sid == 1001
+    messages = {rule.message for rule in rules}
+    assert messages == {
+        "Failed Login",
+        "Successful Login",
+        "Possible Brute Force",
+    }
+
+    failed_login = next(rule for rule in rules if rule.sid == 1001)
+
+    assert failed_login.action == "alert"
+    assert failed_login.source == "windows"
+    assert failed_login.conditions["event_id"] == 4625
+    assert failed_login.message == "Failed Login"
+    assert failed_login.severity == "high"
 
 
 from detection.rule_engine import RuleEngine
