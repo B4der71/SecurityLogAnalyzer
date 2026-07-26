@@ -1,9 +1,78 @@
+
 alert windows (
     event_id:4625;
     msg:"Failed Login";
     severity:high;
     sid:1001;
 )
+
+alert windows (
+    event_id:4624;
+    msg:"Successful Login";
+    severity:low;
+    sid:1002;
+)
+
+alert windows (
+    event_id:4740;
+    msg:"Account Locked";
+    severity:high;
+    sid:1003;
+)
+
+
+alert windows (
+    event_id:4672;
+    msg:"Special Privileges Assigned";
+    severity:medium;
+    sid:1004;
+)
+
+
+alert windows (
+    event_id:4720;
+    msg:"User Account Created";
+    severity:high;
+    sid:1005;
+)
+
+alert windows (
+    event_id:4728;
+    msg:"User Added to Security Group";
+    severity:high;
+    sid:1006;
+)
+
+alert windows (
+    event_id:4732;
+    msg:"User Added to Local Administrators";
+    severity:critical;
+    sid:1007;
+)
+
+
+alert windows (
+    event_id:4697;
+    msg:"Service Installed";
+    severity:high;
+    sid:1008;
+)
+
+alert windows (
+    event_id:7045;
+    msg:"New Windows Service Installed";
+    severity:critical;
+    sid:1009;
+)
+
+
+alert windows (
+    event_id:4104;
+    msg:"PowerShell Script Executed";
+    severity:high;
+    sid:1010;
+)
+
 
 alert windows (
     event_id:4625;
@@ -14,11 +83,4 @@ alert windows (
     msg:"Possible Brute Force";
     severity:critical;
     sid:2001;
-)
-
-alert windows (
-    event_id:4624;
-    msg:"Successful Login";
-    severity:low;
-    sid:1002;
 )

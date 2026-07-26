@@ -110,3 +110,24 @@ def test_detector_does_not_modify_log():
     detector.detect(log)
 
     assert log == original
+
+
+def test_account_lockout_generates_alert():
+
+    detector = Detector()
+
+    log = {
+        "event_id": 4740,
+        "username": "admin",
+        "source": "windows",
+    }
+
+    alerts = detector.process(log)
+
+    assert len(alerts) == 1
+
+    alert = alerts[0]
+
+    assert alert.sid == 1003
+    assert alert.title == "Account Locked"
+    assert alert.severity == "high"
