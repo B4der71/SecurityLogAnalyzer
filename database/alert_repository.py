@@ -97,6 +97,18 @@ class AlertRepository:
 
         return True
 
+    def find_duplicate(self, alert):
+        return (
+            self.session.query(AlertModel)
+            .filter_by(
+                sid=alert.sid,
+                title=alert.title,
+                severity=alert.severity,
+                source=alert.source,
+            )
+            .first()
+        )
+
 
 
 
