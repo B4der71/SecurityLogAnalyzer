@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from detection.detector import Detector
 from detection.rules.rule import Rule
+from detection.rule_loader import RuleLoader
 
 
 def build_rule():
@@ -114,15 +115,19 @@ def test_detector_does_not_modify_log():
 
 def test_account_lockout_generates_alert():
 
-    detector = Detector()
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    detector = Detector(rules)
 
     log = {
         "event_id": 4740,
         "username": "admin",
         "source": "windows",
+        "timestamp": datetime.now(UTC),
     }
 
-    alerts = detector.process(log)
+    alerts = detector.detect(log)
 
     assert len(alerts) == 1
 

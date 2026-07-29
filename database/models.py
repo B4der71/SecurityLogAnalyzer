@@ -3,7 +3,7 @@ Database models for Security Log Analyzer.
 """
 
 # Standard Library
-from datetime import datetime
+from datetime import datetime, UTC
 from decimal import Decimal
 
 # SQLAlchemy
@@ -74,13 +74,13 @@ class User(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC),
         onupdate=datetime.utcnow,
         nullable=False,
     )
@@ -248,7 +248,7 @@ class Log(Base):
     # Time when this event was inserted into our database
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
@@ -335,7 +335,7 @@ class Prediction(Base):
     # Time prediction was generated
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 
@@ -440,7 +440,7 @@ class Alert(Base):
     # Alert creation time
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(UTC),
         nullable=False,
     )
 

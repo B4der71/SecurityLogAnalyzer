@@ -15,7 +15,7 @@ def test_create_alert():
         severity="critical",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={}
     )
 
@@ -31,7 +31,7 @@ from alerts.alert import Alert
 
 def test_alert_initializes_aggregation_fields():
 
-    timestamp = datetime.now()
+    timestamp = datetime.now(UTC)
 
     alert = Alert(
         sid=1001,
@@ -82,7 +82,7 @@ def test_add_alert():
         severity="critical",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={}
     )
 
@@ -102,7 +102,7 @@ def test_get_alerts():
         severity="critical",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={}
     )
 
@@ -113,7 +113,7 @@ def test_get_alerts():
         severity="critical",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={}
     )
 
@@ -136,7 +136,7 @@ def test_duplicate_alerts_are_not_added_twice():
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={
             "username": "admin",
             "source_ip": "192.168.1.10",
@@ -162,7 +162,7 @@ def test_different_users_create_different_alerts():
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={
             "username": "admin",
             "source_ip": "192.168.1.10",
@@ -176,7 +176,7 @@ def test_different_users_create_different_alerts():
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         log={
             "username": "john",
             "source_ip": "192.168.1.10",
@@ -189,14 +189,14 @@ def test_different_users_create_different_alerts():
     assert len(manager.get_alerts()) == 2
 
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 
 def test_duplicate_alert_updates_occurrences_and_last_seen():
 
     manager = AlertManager()
 
-    first_time = datetime.now()
+    first_time = datetime.now(UTC)
     second_time = first_time + timedelta(seconds=10)
 
     alert1 = Alert(

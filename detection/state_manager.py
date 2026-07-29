@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 
 class StateManager:
@@ -29,7 +29,7 @@ class StateManager:
         Expired events are removed automatically.
         """
 
-        now = datetime.now()
+        now = datetime.now(UTC)
         cutoff = now - timedelta(seconds=seconds)
 
         recent_events = []

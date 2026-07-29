@@ -1,5 +1,5 @@
 from database.models import Alert as AlertModel
-from datetime import datetime
+from datetime import datetime, UTC
 
 class AlertRepository:
 
@@ -75,7 +75,7 @@ class AlertRepository:
 
         alert.status = "closed"
         alert.resolved_by = resolved_by
-        alert.resolved_at = datetime.utcnow()
+        alert.resolved_at = datetime.now(UTC)
 
         self.session.commit()
 

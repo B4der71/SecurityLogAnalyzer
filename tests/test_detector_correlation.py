@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from detection.detector import Detector
 from detection.rules.rule import Rule
@@ -36,25 +36,25 @@ def test_bruteforce_success_correlation():
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4624,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
     ]
 
@@ -106,19 +106,19 @@ def test_no_correlation_with_two_failures():
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4624,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
     ]
 
@@ -166,25 +166,25 @@ def test_no_correlation_different_username():
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "john",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4624,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
     ]
 
@@ -233,25 +233,25 @@ def test_no_correlation_different_source_ip():
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "admin",
             "source_ip": "10.0.0.5",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4625,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
         {
             "event_id": 4624,
             "username": "admin",
             "source_ip": "192.168.1.10",
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
         },
     ]
 
@@ -295,11 +295,11 @@ def test_duplicate_success_generates_only_one_correlation():
     detector = Detector(rules)
 
     logs = [
-        {"event_id": 4625, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now()},
-        {"event_id": 4625, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now()},
-        {"event_id": 4625, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now()},
-        {"event_id": 4624, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now()},
-        {"event_id": 4624, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now()},
+        {"event_id": 4625, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now(UTC)},
+        {"event_id": 4625, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now(UTC)},
+        {"event_id": 4625, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now(UTC)},
+        {"event_id": 4624, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now(UTC)},
+        {"event_id": 4624, "username": "admin", "source_ip": "192.168.1.10", "timestamp": datetime.now(UTC)},
     ]
 
     alerts = []

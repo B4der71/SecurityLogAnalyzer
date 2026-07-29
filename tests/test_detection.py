@@ -56,17 +56,52 @@ def test_rule_loader():
 
     rules = loader.load_rules()
 
-    assert len(rules) == 3
+    assert len(rules) == 14
 
     sids = {rule.sid for rule in rules}
-    assert sids == {1001, 1002, 2001}
+
+    assert sids == {
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        1006,
+        1007,
+        1008,
+        1009,
+        1010,
+        1011,
+        1012,
+        1013,
+        2001,
+    }
 
     messages = {rule.message for rule in rules}
-    assert messages == {
+
+
+
+    messages = {rule.message for rule in rules}
+
+    expected = {
         "Failed Login",
         "Successful Login",
+        "Account Locked",
+        "Special Privileges Assigned",
+        "User Account Created",
+        "User Added to Security Group",
+        "User Added to Local Administrators",
+        "Service Installed",
+        "New Windows Service Installed",
+        "PowerShell Script Executed",
+        "User Account Enabled",
+        "User Account Disabled",
+        "User Account Deleted",
         "Possible Brute Force",
     }
+
+
+    assert messages == expected
 
     failed_login = next(rule for rule in rules if rule.sid == 1001)
 
@@ -98,7 +133,7 @@ def test_detect_returns_list():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(UTC)
     }
 
     alerts = engine.detect(log)
@@ -115,7 +150,7 @@ def test_detect_matching_rule():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(UTC)
     }
 
     alerts = engine.detect(log)
@@ -170,7 +205,7 @@ def test_detector_detect():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(UTC)
     }
 
     alerts = detector.detect(log)
@@ -246,13 +281,13 @@ def test_get_events():
     assert events[0]["event_id"] == 4625
     assert events[1]["event_id"] == 4625
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 
 def test_count_recent_events():
     manager = StateManager()
 
-    now = datetime.now()
+    now = datetime.now(UTC)
 
     manager.add_event(
         "failed_login:192.168.1.20",
@@ -351,7 +386,7 @@ def test_threshold_rule_not_triggered_before_limit():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(UTC)
     }
 
     result = None
@@ -375,7 +410,7 @@ def test_threshold_rule_triggers_at_limit():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(UTC)
     }
 
     result = []
@@ -401,7 +436,7 @@ def test_threshold_rule_escalates_at_100():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(UTC)
     }
 
     alerts = []

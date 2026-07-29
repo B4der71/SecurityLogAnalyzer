@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 
 from detection.state_manager import StateManager
 
@@ -7,7 +7,7 @@ def test_add_event():
     manager = StateManager()
 
     event = {
-        "timestamp": datetime.now(),
+        "timestamp": datetime.now(UTC),
         "event_id": 4625
     }
 
@@ -29,12 +29,12 @@ def test_multiple_keys_are_independent():
     manager = StateManager()
 
     event1 = {
-        "timestamp": datetime.now(),
+        "timestamp": datetime.now(UTC),
         "event_id": 4625
     }
 
     event2 = {
-        "timestamp": datetime.now(),
+        "timestamp": datetime.now(UTC),
         "event_id": 4624
     }
 
@@ -54,7 +54,7 @@ def test_count_recent_events():
     manager.add_event(
         "host1",
         {
-            "timestamp": datetime.now(),
+            "timestamp": datetime.now(UTC),
             "event_id": 4625
         }
     )
@@ -70,7 +70,7 @@ def test_expired_events_are_removed():
     manager.add_event(
         "host1",
         {
-            "timestamp": datetime.now() - timedelta(seconds=120),
+            "timestamp": datetime.now(UTC) - timedelta(seconds=120),
             "event_id": 4625
         }
     )

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, UTC
 
 from alerts.alert import Alert
 from database.alert_repository import AlertRepository
@@ -9,7 +9,7 @@ from database.models import Log
 def test_save_alert(db_session):
     # Arrange
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="4625 Failed Login"
@@ -25,7 +25,7 @@ def test_save_alert(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -51,17 +51,11 @@ def test_save_alert(db_session):
     assert saved.log_id == log.log_id
 
 
-from datetime import datetime
-
-from alerts.alert import Alert
-from database.alert_repository import AlertRepository
-from database.models import Log
-
 
 def test_get_alert_by_id(db_session):
     # Arrange
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="4625 Failed Login"
@@ -77,7 +71,7 @@ def test_get_alert_by_id(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -100,7 +94,7 @@ def test_get_all_alerts(db_session):
         repository = AlertRepository(db_session)
 
         log = Log(
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             log_type="windows",
             source="windows.evtx",
             raw_log="Test Log"
@@ -116,7 +110,7 @@ def test_get_all_alerts(db_session):
             severity="high",
             source="windows",
             detection_method="rule",
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             log=log,
         )
 
@@ -127,7 +121,7 @@ def test_get_all_alerts(db_session):
             severity="medium",
             source="windows",
             detection_method="rule",
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             log=log,
         )
 
@@ -147,7 +141,7 @@ def test_get_open_alerts(db_session):
     repository = AlertRepository(db_session)
 
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="Test Log"
@@ -163,7 +157,7 @@ def test_get_open_alerts(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -174,7 +168,7 @@ def test_get_open_alerts(db_session):
         severity="medium",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -198,7 +192,7 @@ def test_get_alerts_by_severity(db_session):
     repository = AlertRepository(db_session)
 
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="Test Log"
@@ -214,7 +208,7 @@ def test_get_alerts_by_severity(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -225,7 +219,7 @@ def test_get_alerts_by_severity(db_session):
         severity="low",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -245,7 +239,7 @@ def test_update_alert_status(db_session):
     repository = AlertRepository(db_session)
 
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="Test Log"
@@ -261,7 +255,7 @@ def test_update_alert_status(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -284,7 +278,7 @@ def test_resolve_alert(db_session):
     repository = AlertRepository(db_session)
 
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="Test Log"
@@ -300,7 +294,7 @@ def test_resolve_alert(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 
@@ -324,7 +318,7 @@ def test_delete_alert(db_session):
     repository = AlertRepository(db_session)
 
     log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="Test Log"
@@ -340,7 +334,7 @@ def test_delete_alert(db_session):
         severity="high",
         source="windows",
         detection_method="rule",
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log=log,
     )
 

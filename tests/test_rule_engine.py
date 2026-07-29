@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, UTC
 
 from detection.rule_loader import RuleLoader
 from detection.rule_engine import RuleEngine
@@ -15,7 +15,7 @@ def test_failed_login_rule_generates_alert():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.10",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -38,7 +38,7 @@ def test_threshold_rule_generates_alert_after_five_events():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.10",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     generated = []
@@ -88,7 +88,7 @@ def test_threshold_rule_milestones():
     log = {
         "event_id": 4625,
         "source_ip": "192.168.1.10",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     generated = []
@@ -115,7 +115,7 @@ def test_account_locked_rule_generates_alert():
 
     log = {
         "event_id": 4740,
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -138,7 +138,7 @@ def test_special_privileges_assigned_rule():
         "source": "Windows",
         "username": "Administrator",
         "source_ip": "192.168.1.10",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -163,7 +163,7 @@ def test_user_account_created_rule():
         "source": "Windows",
         "username": "newuser",
         "source_ip": "192.168.1.20",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -187,7 +187,7 @@ def test_user_added_to_security_group_rule():
         "source": "Windows",
         "username": "john",
         "source_ip": "192.168.1.30",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -211,7 +211,7 @@ def test_user_added_to_local_admins_rule():
         "source": "Windows",
         "username": "john",
         "source_ip": "192.168.1.40",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -235,7 +235,7 @@ def test_service_installed_rule():
         "source": "Windows",
         "username": "SYSTEM",
         "source_ip": "127.0.0.1",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -259,7 +259,7 @@ def test_new_windows_service_rule():
         "source": "Windows",
         "username": "SYSTEM",
         "source_ip": "127.0.0.1",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -283,7 +283,7 @@ def test_powershell_script_rule():
         "source": "Windows",
         "username": "Administrator",
         "source_ip": "192.168.1.50",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -296,6 +296,99 @@ def test_powershell_script_rule():
     assert alert.title == "PowerShell Script Executed"
     assert alert.severity == "high"
 
+def test_special_privileges_assigned_rule():
+
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4672,
+        "timestamp": datetime.now(UTC),
+    }
+
+    alerts = engine.detect(log)
+
+    assert len(alerts) == 1
+    assert alerts[0].sid == 1004
+    assert alerts[0].title == "Special Privileges Assigned"
+
+
+def test_user_account_created_rule():
+
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4720,
+        "timestamp": datetime.now(UTC),
+    }
+
+    alerts = engine.detect(log)
+
+    assert len(alerts) == 1
+    assert alerts[0].sid == 1005
+    assert alerts[0].title == "User Account Created"
+
+
+def test_user_account_enabled_rule():
+
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4722,
+        "timestamp": datetime.now(UTC),
+    }
+
+    alerts = engine.detect(log)
+
+    assert len(alerts) == 1
+    assert alerts[0].sid == 1011
+    assert alerts[0].title == "User Account Enabled"
+
+
+def test_user_account_disabled_rule():
+
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4725,
+        "timestamp": datetime.now(UTC),
+    }
+
+    alerts = engine.detect(log)
+
+    assert len(alerts) == 1
+    assert alerts[0].sid == 1012
+    assert alerts[0].title == "User Account Disabled"
+
+
+def test_user_account_deleted_rule():
+
+    loader = RuleLoader()
+    rules = loader.load_rules()
+
+    engine = RuleEngine(rules)
+
+    log = {
+        "event_id": 4726,
+        "timestamp": datetime.now(UTC),
+    }
+
+    alerts = engine.detect(log)
+
+    assert len(alerts) == 1
+    assert alerts[0].sid == 1013
+    assert alerts[0].title == "User Account Deleted"
 
 
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from detection.rule_engine import RuleEngine
 from detection.rules.rule import Rule
@@ -26,7 +26,7 @@ def test_rule_engine_creates_database_alert(db_session):
 
     log = {
         "event_id": 4625,
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
     }
 
     alerts = engine.detect(log)
@@ -34,7 +34,7 @@ def test_rule_engine_creates_database_alert(db_session):
     assert len(alerts) == 1
 
     db_log = Log(
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(UTC),
         log_type="windows",
         source="windows.evtx",
         raw_log="Test Log",
