@@ -1,6 +1,6 @@
 from database.models import Log
 
-
+from pathlib import PureWindowsPath
 
 
 
@@ -166,14 +166,30 @@ def parse_generic(parser, data, raw_log) -> Log:
         )
     )
 
-    log.image = parser._get(
+    image_path = parser._get(
         data,
         *parser.IMAGE_FIELDS,
     )
 
-    log.parent_image = parser._get(
+    parent_image_path = parser._get(
         data,
         *parser.PARENT_IMAGE_FIELDS,
+    )
+
+    log.image_path = image_path
+
+    log.parent_image_path = parent_image_path
+
+    log.image = (
+        PureWindowsPath(image_path).name
+        if image_path
+        else None
+    )
+
+    log.parent_image = (
+        PureWindowsPath(parent_image_path).name
+        if parent_image_path
+        else None
     )
 
     log.command_line = parser._get(

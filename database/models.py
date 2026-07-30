@@ -194,12 +194,23 @@ class Log(Base):
 
     # Process
     image: Mapped[str | None] = mapped_column(
-        Text,
+        String(255),
         nullable=True,
         index=True,
     )
 
+    image_path: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     parent_image: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+        index=True,
+    )
+
+    parent_image_path: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )

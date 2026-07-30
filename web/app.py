@@ -11,6 +11,7 @@ import os
 import tempfile
 import math
 
+from database.alert_repository import AlertRepository
 from services.ingestion_service import IngestionService
 
 from database.database import SessionLocal
@@ -34,6 +35,7 @@ def create_app() -> Flask:
     session = SessionLocal()
 
     repository = LogRepository(session)
+    alert_repository = AlertRepository(session)
     
     ingestion_service = IngestionService(
         log_repository=repository,
@@ -197,7 +199,36 @@ def create_app() -> Flask:
             total_pages=total_pages,
         )
     
+    @app.get("/alerts")
+    def alerts_page():
+        """
+        Display all alerts.
+        """
 
+        alerts = alert_repository.get_all()
+
+        return render_template(
+            "alerts.html",
+            alerts=alerts,
+        )
+
+    @app.get("/alerts/<int:alert_id>")
+    def alert_details(alert_id: int):
+        """
+        Display details for a single alert.
+        """
+
+        alert = alert_repository.get_by_id(alert_id)
+
+        if alert is None:
+            return "Alert not found.", 404
+
+        return render_template(
+            "alert_details.html",
+            alert=alert,
+        )
+
+    
     @app.get("/logs/<int:log_id>")
     def log_details(log_id: int):
         """

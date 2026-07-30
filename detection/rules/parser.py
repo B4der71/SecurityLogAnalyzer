@@ -61,10 +61,7 @@ class RuleParser:
             key = key.strip()
             value = value.strip().strip('"')
 
-            if key == "event_id":
-                conditions["event_id"] = int(value)
-
-            elif key == "msg":
+            if key == "msg":
                 message = value
 
             elif key == "severity":
@@ -72,7 +69,7 @@ class RuleParser:
 
             elif key == "sid":
                 sid = int(value)
-            
+
             elif key == "threshold":
                 threshold["count"] = int(value)
 
@@ -81,9 +78,20 @@ class RuleParser:
 
             elif key == "milestones":
                 milestones = [int(x.strip()) for x in value.split(",")]
-            
+
             elif key == "track":
                 threshold["track"] = value
+
+            else:
+                # Validate event_id as an integer
+                if key == "event_id":
+                    conditions[key] = int(value)
+                else:
+                    # Store any other field as a condition
+                    try:
+                        conditions[key] = int(value)
+                    except ValueError:
+                        conditions[key] = value
 
         return Rule(
             action=action,

@@ -104,3 +104,175 @@ alert windows (
     severity:high;
     sid:1013;
 )
+
+
+alert windows (
+    msg:"Password Change Attempt";
+    event_id:4723;
+    sid:1014;
+    severity:medium;
+)
+
+alert windows (
+    msg:"Password Reset";
+    event_id:4724;
+    sid:1015;
+    severity:high;
+)
+
+alert windows (
+    msg:"Sensitive Privilege Service Called";
+    event_id:4673;
+    sid:1016;
+    severity:high;
+)
+
+alert windows (
+    msg:"Privileged Object Operation";
+    event_id:4674;
+    sid:1017;
+    severity:high;
+)
+
+
+
+alert windows (
+    msg:"Scheduled Task Deleted";
+    event_id:4699;
+    sid:1019;
+    severity:medium;
+)
+
+
+alert windows (
+    msg:"System Audit Policy Changed";
+    event_id:4719;
+    sid:1021;
+    severity:high;
+)
+
+alert windows (
+    msg:"Security Enabled Global Group Changed";
+    event_id:4735;
+    sid:1022;
+    severity:medium;
+)
+
+alert windows (
+    msg:"User Account Changed";
+    event_id:4738;
+    sid:1023;
+    severity:medium;
+)
+
+
+
+
+alert windows (
+    msg:"Scheduled Task Created";
+    event_id:4698;
+    sid:1026;
+    severity:high;
+)
+
+alert windows (
+    msg:"Scheduled Task Updated";
+    event_id:4702;
+    sid:1027;
+    severity:medium;
+)
+
+alert windows (
+    msg:"Registry Value Modified";
+    event_id:4657;
+    sid:1028;
+    severity:high;
+)
+
+alert windows (
+    msg:"Startup Folder Modified";
+    event_id:4663;
+    sid:1029;
+    severity:medium;
+)
+
+alert windows (
+    msg:"Windows Firewall Rule Changed";
+    event_id:4946;
+    sid:1030;
+    severity:high;
+)
+
+alert windows (
+    msg:"Windows Firewall Rule Modified";
+    event_id:4947;
+    sid:1031;
+    severity:high;
+)
+
+alert windows (
+    msg:"Windows Firewall Rule Deleted";
+    event_id:4948;
+    sid:1032;
+    severity:high;
+)
+
+alert windows (
+    msg:"Windows Service Configuration Changed";
+    event_id:7040;
+    sid:1033;
+    severity:medium;
+)
+
+
+
+
+alert windows (
+    msg:"PowerShell Engine Started";
+    event_id:400;
+    sid:1035;
+    severity:medium;
+)
+
+alert windows (
+    msg:"PowerShell Engine Stopped";
+    event_id:403;
+    sid:1036;
+    severity:low;
+)
+
+alert windows (
+    msg:"PowerShell Command Started";
+    event_id:4103;
+    sid:1037;
+    severity:high;
+)
+
+alert windows (
+    msg:"Process Created";
+    event_id:4688;
+    sid:1038;
+    severity:medium;
+)
+
+alert windows (
+    msg:"Process Terminated";
+    event_id:4689;
+    sid:1039;
+    severity:low;
+)
+
+alert windows (
+    msg:"Windows Installer Started";
+    event_id:11707;
+    sid:1040;
+    severity:medium;
+)
+
+alert windows (
+    msg:"Application Installed";
+    event_id:1033;
+    sid:1041;
+    severity:medium;
+)
+

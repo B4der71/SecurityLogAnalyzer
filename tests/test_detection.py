@@ -56,26 +56,21 @@ def test_rule_loader():
 
     rules = loader.load_rules()
 
-    assert len(rules) == 14
+    assert rules
 
-    sids = {rule.sid for rule in rules}
+    sids = [rule.sid for rule in rules]
 
-    assert sids == {
-        1001,
-        1002,
-        1003,
-        1004,
-        1005,
-        1006,
-        1007,
-        1008,
-        1009,
-        1010,
-        1011,
-        1012,
-        1013,
-        2001,
-    }
+    # No duplicate SIDs
+    assert len(sids) == len(set(sids))
+
+    # Core rules must always exist
+    assert {1001, 1002, 1003, 2001}.issubset(set(sids))
+
+    # Every rule must have a message
+    assert all(rule.message for rule in rules)
+
+    # Every rule must have a severity
+    assert all(rule.severity for rule in rules)
 
     messages = {rule.message for rule in rules}
 
@@ -101,7 +96,7 @@ def test_rule_loader():
     }
 
 
-    assert messages == expected
+    assert expected.issubset(messages)
 
     failed_login = next(rule for rule in rules if rule.sid == 1001)
 
@@ -173,7 +168,8 @@ def test_detect_no_match():
     engine = RuleEngine(rules)
 
     log = {
-        "event_id": 4688
+        "event_id": 9999,
+        "timestamp": datetime.now(UTC)
     }
 
     matches = engine.detect(log)

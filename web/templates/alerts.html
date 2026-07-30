@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+Alerts
+{% endblock %}
+
+{% block content %}
+
+<h2>Alerts</h2>
+
+<div class="card">
+
+<table>
+
+<thead>
+
+<tr>
+    <th>ID</th>
+    <th>Severity</th>
+    <th>Title</th>
+    <th>Source</th>
+    <th>Timestamp</th>
+    <th></th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for alert in alerts %}
+
+<tr>
+
+<td>{{ alert.alert_id }}</td>
+
+<td>{{ alert.severity }}</td>
+
+<td>{{ alert.title }}</td>
+
+<td>{{ alert.source }}</td>
+
+<td>{{ alert.created_at }}</td>
+
+<td>
+    <a
+        class="btn"
+        href="{{ url_for('alert_details', alert_id=alert.alert_id) }}"
+    >
+        View
+    </a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% if not alerts %}
+<p>No alerts found.</p>
+{% endif %}
+
+</div>
+
+{% endblock %}
